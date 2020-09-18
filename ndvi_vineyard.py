@@ -23,7 +23,7 @@ outline = empty.paint(**{
   'color': 1,
   'width': 1
 });
-viz_params = {'bands': ['B5', 'B4', 'B3'], 'min' : 0, 'max' : 2000}
+viz_params = {'bands': ['B4', 'B3', 'B2'], 'min' : 0, 'max' : 2000}
 
 def maskCloudAndShadows(image):
     cloudProb = image.select('MSK_CLDPRB')
@@ -38,7 +38,7 @@ def maskCloudAndShadows(image):
     return image.updateMask(mask);
 
 def addNDVI(image):
-    ndvi = image.normalizedDifference(['B5', 'B4']).rename('ndvi')
+    ndvi = image.normalizedDifference(['B8', 'B4']).rename('ndvi')
     return image.addBands([ndvi])
 
 start_date = '2019-09-11'
@@ -113,27 +113,25 @@ for feature in features:
         Map.addLayer(outline, {'palette': ['green', 'yellow', 'red']}, 'farm')
         project = QgsProject.instance()
         layout = QgsLayout(project)
-        layout.initializeDefaults()
-        
-        
-#        with open(template) as f:
-#            template_content = f.read()
-#        doc = QDomDocument()
-#        doc.setContent(template_content)
-#        # adding to existing items
-#        items, ok = layout.loadFromTemplate(doc, QgsReadWriteContext(), False)
-#        ndvi_label = layout.itemById('ndvi_label')
-#        ndvi_label.setText('{:.2f}'.format(ndvi))
-#        ndvi_label.setFontColor(select_color(ndvi))
+        layout.initializeDefaults()      
+        with open(template) as f:
+            template_content = f.read()
+        doc = QDomDocument()
+        doc.setContent(template_content)
+        # adding to existing items
+        items, ok = layout.loadFromTemplate(doc, QgsReadWriteContext(), False)
+        ndvi_label = layout.itemById('ndvi_label')
+        ndvi_label.setText('{:.2f}'.format(ndvi))
+        ndvi_label.setFontColor(select_color(ndvi))
 
-#        date_label = layout.itemById('date_label')
-#        date_label.setText(date)
+        date_label = layout.itemById('date_label')
+        date_label.setText(date)
 
-#        season = select_season(date)
-#        season_label = layout.itemById('season_label')
-#        season_label.setText(season)
+        season = select_season(date)
+        season_label = layout.itemById('season_label')
+        season_label.setText(season)
 
-#        exporter = QgsLayoutExporter(layout)
-#        output_image = os.path.join(home_dir, wdir, 'ndvi_img', '{}.png'.format(date))
-#        exporter.exportToImage(output_image, QgsLayoutExporter.ImageExportSettings())
-#        exporter.exportToPdf(output_image, QgsLayoutExporter.PdfExportSettings())
+        exporter = QgsLayoutExporter(layout)
+        output_image = os.path.join(home_dir, wdir, 'ndvi_img', '{}.png'.format(date))
+        exporter.exportToImage(output_image, QgsLayoutExporter.ImageExportSettings())
+        exporter.exportToPdf(output_image, QgsLayoutExporter.PdfExportSettings())
